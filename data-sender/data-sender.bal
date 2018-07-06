@@ -94,22 +94,7 @@ function main(string... args) {
 boolean flag_secondmail=false;
 
 function scheduler() returns error? {
-    time:Time time = time:currentTime();
-    io:println("Checking for the scheduled emails");
-
-    time:Time tmAdd = time.addDuration(0, 0, 0, 0, 0, 2, 0);
-    io:println("After adding duration: " + tmAdd.toString());
-    int m2=tmAdd.second();
-
-    time:Time time2 = time:currentTime();
-    string standardTimeString = time2.toString();
-    io:println("Current system time in ISO format: " + standardTimeString);
-    int m1=time2.second();
-
-    if(m2>m1){
-
-        interior();
-    }
+    secondScheduledMessage();
 
     if (flag_secondmail) {
 
@@ -175,6 +160,13 @@ function sendAcknowledgement() {
                     string subject = "Thank You for applying for the position of  " + Post+ " and accepting our offer.";
 
                     sendMail(EmailAddress, subject, getCustomEmailTemplate(EmployeeName,Post,ExpectedSkillSet));
+                    var details = twilioClient->sendSms("+15023531035","+94767882078","message sent");
+                    match details {
+                        twilio:SmsResponse smsResponse => io:println(smsResponse);
+
+                        twilio:TwilioError twilioError => io:println(twilioError);
+                    }
+
                     io:println("First scheduled mail for the user "+ EmployeeName+ " was sent");
                 }
 
@@ -214,14 +206,14 @@ function sendSecondMail() {
                 match intResult {
                     int val => {
                         int l = val;
-                        l=l+30;
+                        l=l+30;       //sending the second mail after 30 seconds.For demo time schdule is limited to 30 s.We can extend the time to days and months
 
                         if (l>59){
 
                             l=l-60;
                         }
                         time:Time time1 = time:currentTime();
-                        int sec = time1.second();
+                        int sec = time1.second();  //As the time delay is 30 seconds we get seconds for the comparision
                         io:println(" current time is "+sec);
                         if(sec>l){
 
@@ -249,6 +241,13 @@ function sendSecondMail() {
                             flag_secondmail=true;
                             j=j+1;
 
+                            var details = twilioClient->sendSms("+15023531035","+94767882078","message sent");
+                            match details {
+                                twilio:SmsResponse smsResponse => io:println(smsResponse);
+
+                                twilio:TwilioError twilioError => io:println(twilioError);
+                            }
+
 
 
 
@@ -265,12 +264,7 @@ function sendSecondMail() {
 
 
 
-                //var details = twilioClient->sendSms("+15023531035","+94767882078","Scheduled message for " + EmployeeName +was sent on time");
-                //match details {
-                // twilio:SmsResponse smsResponse => io:println(smsResponse);
 
-                //twilio:TwilioError twilioError => io:println(twilioError);
-                //}
 
 
 
@@ -288,7 +282,7 @@ function sendSecondMail() {
 
 
 
-function interior(){
+function secondScheduledMessage(){
 
     string[][] values = getCustomerDetailsFromGSheet();
     var spreadsheetRes_employee = spreadsheetClient->getColumnData(spreadsheetId,"","A");
@@ -298,7 +292,7 @@ function interior(){
     io:println(spreadsheetRes_employee);
 
 
-    while(j<4){
+    while(j<4){                          //to rn the prograamme continuosly untill all the scheduled messages are sent.
 
         sendSecondMail();
     }
