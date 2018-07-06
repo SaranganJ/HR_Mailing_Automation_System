@@ -1,0 +1,14 @@
+<component name="libraryTable">
+  <library name="BALLERINA_REPOSITORY &lt;weekpro&gt;">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.ballerina/caches/central.ballerina.io/wso2" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://$USER_HOME$/.ballerina/caches/central.ballerina.io/wso2" />
+    </SOURCES>
+    <excluded>
+      <root url="file://$PROJECT_DIR$" />
+    </excluded>
+  </library>
+</component>
